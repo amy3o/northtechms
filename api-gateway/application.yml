@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      default-filters:
+        - StripPrefix=1
+      routes: []
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO

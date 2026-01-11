@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - tracking-service
+      - delivery-service
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+
+  tracking-service:
+    build: ./tracking-service
+    ports:
+      - "8082:8082"
+
+  delivery-service:
+    build: ./delivery-service
+    ports:
+      - "8083:8083"
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - tracking-service
+      - delivery-service
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+
+  analytics-service:
+    build: ./analytics-service
+    ports:
+      - "8085:8085"
+
+  audit-service:
+    build: ./audit-service
+    ports:
+      - "8086:8086"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+networks:
+  default:
+    driver: bridge
